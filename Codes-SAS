@@ -1,0 +1,367 @@
+libname logd "/folders/myfolders/Proactive Attrition Management-Logistic Regression Case Study";
+
+/* Data file import */
+
+proc import 
+datafile="/folders/myfolders/Proactive Attrition Management-Logistic Regression Case Study/Proactive Attrition Management-Logistic Regression Case Study.csv"
+out=logd.mydata dbms=csv replace;
+getnames=Y;
+datarow=2;
+run; 
+
+proc contents data=logd.mydata varnum;
+run;
+
+/* Missing value judgement and treatment */
+
+proc means data=logd.mydata n nmiss min max mean std P5 P5;
+run;
+proc freq data=logd.mydata;
+table churn;
+run;
+
+/* Missing value Treatment - Mean imputation*/
+
+data logd.mydata;
+set logd.mydata;
+if  REVENUE = .  then  REVENUE= 58.8539614  ;
+if  MOU = .  then  MOU= 525.7283924  ;
+if  RECCHRGE = .  then  RECCHRGE= 46.8764916  ;
+if  DIRECTAS = .  then  DIRECTAS= 0.8948011  ;
+if  OVERAGE = .  then  OVERAGE= 40.0953598  ;
+if  ROAM = .  then  ROAM= 1.2215262  ;
+if  CHANGEM = .  then  CHANGEM= -10.8464614  ;
+if  CHANGER = .  then  CHANGER= -1.2059256  ;
+if  PHONES = .  then  PHONES= 1.808617  ;
+if  MODELS = .  then  MODELS= 1.561791  ;
+if  EQPDAYS = .  then  EQPDAYS= 380.2656307  ;
+if  AGE1 = .  then  AGE1= 31.3751128  ;
+if  AGE2 = .  then  AGE2= 21.1577153  ;
+run;
+
+proc means data=logd.mydata n nmiss p95;
+run;
+
+
+/* Outlier treatment via P95% immputation */
+
+data logd.mydata;
+set logd.mydata;
+if  REVENUE >  135.24  Then REVENUE =  135.24 ;
+if  MOU >  1579.25  Then MOU =  1579.25 ;
+if  RECCHRGE >  85  Then RECCHRGE =  85 ;
+if  DIRECTAS >  4.21  Then DIRECTAS =  4.21 ;
+if  OVERAGE >  190  Then OVERAGE =  190 ;
+if  ROAM >  5.07  Then ROAM =  5.07 ;
+if  CHANGEM >  343.75  Then CHANGEM =  343.75 ;
+if  CHANGER >  45.9  Then CHANGER =  45.9 ;
+if  DROPVCE >  22  Then DROPVCE =  22 ;
+if  BLCKVCE >  17.33  Then BLCKVCE =  17.33 ;
+if  UNANSVCE >  97.67  Then UNANSVCE =  97.67 ;
+if  CUSTCARE >  9.33  Then CUSTCARE =  9.33 ;
+if  THREEWAY >  1.33  Then THREEWAY =  1.33 ;
+if  MOUREC >  440.95  Then MOUREC =  440.95 ;
+if  OUTCALLS >  90.33  Then OUTCALLS =  90.33 ;
+if  INCALLS >  35.67  Then INCALLS =  35.67 ;
+if  PEAKVCE >  279.67  Then PEAKVCE =  279.67 ;
+if  OPEAKVCE >  242  Then OPEAKVCE =  242 ;
+if  DROPBLK >  35.33  Then DROPBLK =  35.33 ;
+if  CALLFWDV >  0  Then CALLFWDV =  0 ;
+if  CALLWAIT >  8.67  Then CALLWAIT =  8.67 ;
+if  CHURN >  1  Then CHURN =  1 ;
+if  MONTHS >  37  Then MONTHS =  37 ;
+if  UNIQSUBS >  3  Then UNIQSUBS =  3 ;
+if  ACTVSUBS >  2  Then ACTVSUBS =  2 ;
+if  PHONES >  4  Then PHONES =  4 ;
+if  MODELS >  3  Then MODELS =  3 ;
+if  EQPDAYS >  866  Then EQPDAYS =  866 ;
+if  CUSTOMER >  1095336  Then CUSTOMER =  1095336 ;
+if  AGE1 >  62  Then AGE1 =  62 ;
+if  AGE2 >  60  Then AGE2 =  60 ;
+if  RETCALLS >  0  Then RETCALLS =  0 ;
+if  RETACCPT >  0  Then RETACCPT =  0 ;
+if  REFER >  0  Then REFER =  0 ;
+if  INCOME >  9  Then INCOME =  9 ;
+if  CREDITAD >  0  Then CREDITAD =  0 ;
+if  SETPRC >  149.99  Then SETPRC =  149.99 ;
+if  REVENUE <  15.57  Then REVENUE =  15.57 ;
+if  MOU <  20.5  Then MOU =  20.5 ;
+if  RECCHRGE <  10  Then RECCHRGE =  10 ;
+if  DIRECTAS <  0  Then DIRECTAS =  0 ;
+if  OVERAGE <  0  Then OVERAGE =  0 ;
+if  ROAM <  0  Then ROAM =  0 ;
+if  CHANGEM <  -374  Then CHANGEM =  -374 ;
+if  CHANGER <  -47.23  Then CHANGER =  -47.23 ;
+if  DROPVCE <  0  Then DROPVCE =  0 ;
+if  BLCKVCE <  0  Then BLCKVCE =  0 ;
+if  UNANSVCE <  0  Then UNANSVCE =  0 ;
+if  CUSTCARE <  0  Then CUSTCARE =  0 ;
+if  THREEWAY <  0  Then THREEWAY =  0 ;
+if  MOUREC <  0  Then MOUREC =  0 ;
+if  OUTCALLS <  0  Then OUTCALLS =  0 ;
+if  INCALLS <  0  Then INCALLS =  0 ;
+if  PEAKVCE <  0  Then PEAKVCE =  0 ;
+if  OPEAKVCE <  0  Then OPEAKVCE =  0 ;
+if  DROPBLK <  0  Then DROPBLK =  0 ;
+if  CALLFWDV <  0  Then CALLFWDV =  0 ;
+if  CALLWAIT <  0  Then CALLWAIT =  0 ;
+if  CHURN <  0  Then CHURN =  0 ;
+if  MONTHS <  7  Then MONTHS =  7 ;
+if  UNIQSUBS <  1  Then UNIQSUBS =  1 ;
+if  ACTVSUBS <  1  Then ACTVSUBS =  1 ;
+if  PHONES <  1  Then PHONES =  1 ;
+if  MODELS <  1  Then MODELS =  1 ;
+if  EQPDAYS <  42  Then EQPDAYS =  42 ;
+if  CUSTOMER <  1004986  Then CUSTOMER =  1004986 ;
+if  AGE1 <  0  Then AGE1 =  0 ;
+if  AGE2 <  0  Then AGE2 =  0 ;
+if  RETCALLS <  0  Then RETCALLS =  0 ;
+if  RETACCPT <  0  Then RETACCPT =  0 ;
+if  REFER <  0  Then REFER =  0 ;
+if  INCOME <  0  Then INCOME =  0 ;
+if  CREDITAD <  0  Then CREDITAD =  0 ;
+if  SETPRC <  0  Then SETPRC =  0 ;
+run;
+
+/* Dimension reduction via Chi sqr test to eliminate useless catagorical variables */
+
+proc freq data=logd.mydata;
+tables churn * (CHILDREN
+CREDITA
+CREDITAA
+CREDITB
+CREDITC
+CREDITDE
+CREDITGY
+CREDITZ
+PRIZMRUR
+PRIZMUB
+PRIZMTWN
+REFURB
+WEBCAP
+OCCPROF
+OCCCLER
+OCCCRFT
+OCCSTUD
+OCCHMKR
+OCCRET
+OCCSELF
+MARRYYES
+MARRYNO
+MAILORD
+MAILRES
+MAILFLAG
+TRAVEL
+PCOWN
+NEWCELLY
+NEWCELLN
+INCMISS)/ chisq nocol nopercent norow;
+run;
+
+/* Correlation Matrix */
+
+proc corr data=logd.mydata;
+var REVENUE
+MOU
+RECCHRGE
+DIRECTAS
+OVERAGE
+ROAM
+CHANGEM
+CHANGER
+DROPVCE
+BLCKVCE
+UNANSVCE
+CUSTCARE
+THREEWAY
+MOUREC
+OUTCALLS
+INCALLS
+PEAKVCE
+OPEAKVCE
+DROPBLK
+CALLFWDV
+CALLWAIT
+MONTHS
+UNIQSUBS
+ACTVSUBS
+PHONES
+MODELS
+EQPDAYS
+RETCALLS
+RETACCPT
+INCOME
+CREDITAD
+SETPRCM
+SETPRC;
+run;
+	
+/* Factor Analysis */
+
+proc factor data=logd.mydata method=principal mineigen=0 rotate=varimax nfactors=15 scree reorder;
+var 
+CREDITA
+CREDITAA
+CREDITB
+CREDITC
+CREDITDE
+PRIZMRUR
+PRIZMUB
+PRIZMTWN
+REFURB
+WEBCAP
+OCCRET
+MARRYNO
+MAILORD
+MAILRES
+NEWCELLY
+INCMISS
+MOU
+RECCHRGE
+DIRECTAS
+OVERAGE
+ROAM
+CHANGEM
+CHANGER
+DROPVCE
+BLCKVCE
+CUSTCARE
+THREEWAY
+OUTCALLS
+INCALLS
+PEAKVCE
+OPEAKVCE
+MONTHS
+UNIQSUBS
+ACTVSUBS
+PHONES
+MODELS
+EQPDAYS
+INCOME
+SETPRCM
+SETPRC;
+run;
+
+/* Calibration and validation data split */
+
+data logd.logdev logd.logval;
+set logd.mydata;
+if  CALIBRAT=1 then output logd.logdev;
+else output logd.logval;
+run;
+
+data logd.logdev;
+set logd.logdev;
+root_mou = sqrt(mou);
+root_eqpdays = sqrt(eqpdays);
+root_overage = sqrt(overage);
+run;
+
+data logd.logval;
+set logd.logval;
+root_mou = sqrt(mou);
+root_eqpdays = sqrt(eqpdays);
+root_overage = sqrt(overage);
+run;
+
+/* Logistic regression */
+
+proc logistic data=logd.logdev descending;
+model churn =
+root_MOU 
+root_OVERAGE 
+root_EQPDAYS
+OPEAKVCE
+OUTCALLS
+PEAKVCE
+DROPVCE
+INCALLS
+RECCHRGE
+PHONES
+MODELS
+SETPRC
+MAILRES
+MAILORD
+MONTHS
+CREDITA
+WEBCAP
+UNIQSUBS
+ACTVSUBS
+CHANGEM
+CHANGER
+INCOME
+PRIZMTWN
+PRIZMUB
+CREDITDE
+CREDITAA
+ROAM
+CREDITC
+PRIZMRUR
+NEWCELLY
+OCCRET/ selection=stepwise slentry=0.05 slstay=0.05 stb lackfit;
+run;
+
+/* puting  equation for prediction, Data validation */
+
+Data logd.logdev;
+set logd.logdev;
+Y= -0.514 + -0.0236  *  root_mou + 0.0497  *  root_overage + 
+0.0609  *  root_eqpdays + 0.000822  *  OPEAKVCE  -0.00091  *  PEAKVCE +
+ 0.0152  *  DROPVCE  -0.00543  *  INCALLS  + 0.14  *  PHONES  + 
+ 0.00183  *  SETPRC -0.1526  *  MAILRES  -0.0194  *  MONTHS  -0.2304  *  WEBCAP + 
+ 0.1956  *  UNIQSUBS  -0.1659  *  ACTVSUBS  -0.00083  *  CHANGEM + 0.00182  *  CHANGER  
+ -0.0189  *  INCOME  + 0.0623  *  PRIZMTWN  -0.3436  *  CREDITDE + 0.0432  *  ROAM 
+ -0.1455  *  CREDITC -0.0635  *  NEWCELLY;
+predic= exp(Y)/1+exp(Y);
+run;
+
+
+data logd.logval;
+set logd.logval;
+Y= -0.514 + -0.0236  *  root_mou + 0.0497  *  root_overage + 
+0.0609  *  root_eqpdays + 0.000822  *  OPEAKVCE  
+-0.00091  *  PEAKVCE + 0.0152  *  DROPVCE  -0.00543  *  INCALLS  + 
+0.14  *  PHONES  + 0.00183  *  SETPRC -0.1526  *  MAILRES  
+-0.0194  *  MONTHS  -0.2304  *  WEBCAP + 0.1956  *  UNIQSUBS  
+-0.1659  *  ACTVSUBS  -0.00083  *  CHANGEM + 0.00182  *  CHANGER  
+-0.0189  *  INCOME  + 0.0623  *  PRIZMTWN  -0.3436  *  CREDITDE + 0.0432
+  *  ROAM -0.1455  *  CREDITC -0.0635  *  NEWCELLY;
+predic= exp(Y)/1+exp(Y);
+run;
+
+proc rank data=logd.logdev out=logd.logdev  groups=10;
+var predic;
+ranks deciles;
+run;
+  
+proc rank data=logd.logval out=logd.logval  groups=10;
+var predic;
+ranks deciles;
+run;
+
+data logd.logval;
+set logd.logval;
+deciles = deciles+1;
+run;
+
+data logd.logdev;
+set logd.logdev;
+deciles = deciles+1;
+run;
+
+proc sql ;
+select deciles, count(predic) as number_of_obs, min(predic) as min_score,
+max(predic) as max_score,sum(churn) as churners
+from logd.logdev
+group by deciles
+order by deciles desc;
+
+select deciles,count(predic) as number_of_obs, min(predic) as min_score,
+max(predic) as max_score, sum(churn) as churners
+from logd.logval
+group by deciles
+order by deciles desc;
+
+quit;
+
+	/********** End ************/
